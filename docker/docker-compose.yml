@@ -1,0 +1,39 @@
+version: '3'
+
+services:
+
+  mariadb:
+    image: mariadb
+    restart: always
+    volumes:
+        - ./storage/mariadb/var/lib/mysql:/var/lib/mysql
+        - ./docker/mysql/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+    environment:
+        MYSQL_ROOT_PASSWORD: admitpass
+
+
+  php:
+    depends_on:
+      - mariadb
+    build:
+      context: ./docker/php
+      dockerfile: Dockerdev
+    restart: always
+    volumes:
+      - ./app:/var/www/app
+      - ./docker/php/etc/php-fpm.d:/etc/php-fpm.d
+
+
+  nginx:
+    depends_on:
+      - php
+    build:
+      context: ./docker/nginx
+      dockerfile: Dockerdev
+    restart: always
+    volumes:
+      - ./app:/var/www/app:ro
+      - ./docker/nginx/etc/nginx/conf.d:/etc/nginx/conf.d
+    ports:
+      - 9876:80
+    command: 'nginx -g "daemon off;"'

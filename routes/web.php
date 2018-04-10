@@ -12,5 +12,15 @@
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('home');
 });
+
+Route::post('/', function(\App\Http\Controllers\HomeControler $controller, \App\Http\Requests\AddLinkRequest $request) {
+    return $controller->addAction($request);
+});
+
+
+
+Route::get('/{hash}', function(\App\Http\Controllers\HomeControler $controller, $hash) {
+    return $controller->redirectAction($hash);
+})->where(['hash' => '[a-zA-Z0-9]+'])->name('redirect');

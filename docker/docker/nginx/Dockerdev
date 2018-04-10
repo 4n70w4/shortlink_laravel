@@ -1,0 +1,7 @@
+FROM centos:7
+
+COPY ./nginx.repo /etc/yum.repos.d/nginx.repo
+
+RUN yum install nginx -y
+
+RUN rm /etc/nginx/conf.d/default.conf

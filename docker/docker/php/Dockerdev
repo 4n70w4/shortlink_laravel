@@ -1,0 +1,23 @@
+FROM centos:7
+
+RUN yum -y install epel-release && rpm -Uvh http://rpms.remirepo.net/enterprise/remi-release-7.rpm && yum -y install yum-utils && yum-config-manager --enable remi-php71
+RUN yum install -y php php-fpm php-opcache php-xml php-mbstring php-pdo php-pdo_mysql php-pdo_pgsql php-zip php-bcmath php-gd php-mongodb
+#RUN yum install -y php-xdebug
+
+# for deployer
+RUN yum install -y wget sudo git
+
+RUN curl -sS https://getcomposer.org/installer | php && mv composer.phar /usr/bin/composer
+RUN wget https://phar.phpunit.de/phpunit-6.5.phar && chmod +x phpunit-6.5.phar && mv phpunit-6.5.phar /usr/local/bin/phpunit
+
+
+RUN rm /etc/php-fpm.d/www.conf
+
+RUN useradd app
+
+USER root
+
+WORKDIR /var/www/app/current
+
+CMD ["php-fpm", "-F"]
+
